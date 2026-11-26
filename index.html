@@ -5,252 +5,388 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rosi's Studio</title>
 <meta name="description" content="Rosi's Studio makes cheerful coloring books for kids ages 3 to 8. Meet Little Paws, Busy Days: 50 cute baby animal coloring pages.">
-<link rel="icon" href="./favicon.png">
+<link rel="icon" href="favicon.png">
 <style>
 /* VOICE: warm, playful, tidy, like a picture-book shelf in a small shop
-   IDEA: the cover of a children's coloring book, cream paper, bunting and grass
-   PICTURE: the book's own cast and cover in one wide scene
-   COLOUR and TYPE: cream paper, cocoa ink, coral and sky blue, grass green; Fredoka for titles
-   LAYOUT: centered title over a full-width scene, then book, look inside, about, contact */
-@font-face{font-family:Fredoka;src:url(./Fredoka-700.ttf) format("truetype");font-weight:700;font-display:swap}
-@font-face{font-family:Fredoka;src:url(./Fredoka-600.ttf) format("truetype");font-weight:600;font-display:swap}
+   IDEA: a coloring book that comes alive: the scene moves, a page colors itself as you scroll
+   PICTURE: the book's own cast on layered grass, the cover tilting toward the reader
+   COLOUR and TYPE: cream paper, cocoa ink, coral, sky blue, grass green; Fredoka for titles
+   LAYOUT: centered title over a full-width living scene, then book, color-in, look inside, all 50, about */
+@font-face{font-family:Fredoka;src:url(Fredoka-700.ttf) format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:Fredoka;src:url(Fredoka-600.ttf) format("truetype");font-weight:600;font-display:swap}
 :root{color-scheme:light dark;
  --bg:light-dark(#fff6e6,#1f2238);--paper:light-dark(#ffffff,#2a2e48);--ink:light-dark(#3d2c23,#fdf3e2);
  --soft:light-dark(#6b5446,#cfc4b4);--coral:#ff8a5b;--sky:light-dark(#3b8fd0,#7cc0f2);--grass:light-dark(#cdeeb4,#2e4a35);
- --line:light-dark(#3d2c23,#fdf3e2);--sun:#ffd54a;--red:#ef5b5b}
+ --line:light-dark(#3d2c23,#fdf3e2);--sun:#ffd54a;--skytop:light-dark(#cfeaff,#283057)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip}
-h1,h2,h3,.brand,.btn,.tag{font-family:Fredoka,system-ui,sans-serif}
+h1,h2,h3,.brand,.btn,.tag,.num{font-family:Fredoka,system-ui,sans-serif}
 h1,h2{line-height:1.05;text-wrap:balance;margin:0 0 .4em}
-h1{font-size:clamp(36px,5.4vw,56px);font-weight:700}
-h2{font-size:clamp(30px,4vw,44px);font-weight:700}
+h1{font-size:clamp(36px,5.6vw,60px);font-weight:700}
+h2{font-size:clamp(30px,4vw,46px);font-weight:700}
 h3{font-size:21px;font-weight:600;margin:0 0 .3em}
 p{margin:0 0 1em;max-width:62ch}
-a{color:var(--sky)}
 img{display:block;max-width:100%;height:auto}
 .wrap{max-width:1240px;margin:0 auto}
-.band{padding:clamp(40px,6vw,88px) max(5vw,16px)}
+.band{padding:clamp(48px,7vw,104px) max(5vw,16px)}
+.center{text-align:center}.center p{margin-inline:auto}
+/* progress crayon line */
+.progress{position:fixed;inset:0 0 auto 0;height:5px;z-index:20;transform-origin:left;transform:scaleX(var(--sp,0));background:linear-gradient(90deg,var(--coral),var(--sun),#78c25c,var(--sky));border-radius:0 3px 3px 0}
 /* nav */
-header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:3px solid var(--line)}
-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;max-width:1240px;margin:0 auto;padding:10px max(5vw,16px)}
+header{position:fixed;inset:0 0 auto 0;z-index:10;transition:background .3s,box-shadow .3s,padding .3s}
+header.scrolled{background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);box-shadow:0 3px 0 var(--line)}
+nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;max-width:1240px;margin:0 auto;padding:14px max(5vw,16px)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:24px;color:var(--ink);text-decoration:none;margin-right:auto}
-.brand img{width:44px;height:44px;border-radius:50%}
-nav .links{display:flex;flex-wrap:wrap;gap:4px 18px}
-nav .links a{color:var(--ink);text-decoration:none;font-weight:600;padding:8px 2px}
-nav .links a:hover{color:var(--coral)}
+.brand img{width:44px;height:44px;border-radius:50%;transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
+.brand:hover img{transform:rotate(-14deg) scale(1.08)}
+nav .links{display:flex;flex-wrap:wrap;gap:4px 20px}
+nav .links a{color:var(--ink);text-decoration:none;font-weight:600;padding:8px 2px;position:relative}
+nav .links a::after{content:"";position:absolute;left:0;right:0;bottom:4px;height:3px;border-radius:3px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+nav .links a:hover::after{transform:scaleX(1)}
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border-radius:999px;border:3px solid var(--line);
- background:var(--coral);color:#fff;font-size:20px;font-weight:700;text-decoration:none;box-shadow:0 5px 0 var(--line);transition:transform .15s,box-shadow .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 28px;border-radius:999px;border:3px solid var(--line);background:var(--coral);color:#fff;font-size:20px;font-weight:700;text-decoration:none;box-shadow:0 5px 0 var(--line);transition:transform .15s,box-shadow .15s;cursor:pointer}
 .btn:hover{transform:translateY(2px);box-shadow:0 3px 0 var(--line)}
-.btn:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.btn.ghost{background:var(--paper);color:var(--ink)}
 .btn.off{background:var(--paper);color:var(--soft);box-shadow:none;cursor:default;transform:none}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.linkish{background:none;border:0;padding:0;font:inherit;color:var(--sky);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 /* hero */
-.hero{text-align:center;padding-bottom:0}
-.hero p{margin:0 auto 1.4em;font-size:19px;color:var(--soft)}
-.scene{margin-top:clamp(24px,4vw,40px);border-top:3px solid var(--line);border-bottom:3px solid var(--line);background:#fff6e6}
-.scene img{width:100%;max-width:1700px;margin:0 auto}
+.hero{position:relative;overflow:hidden;background:linear-gradient(var(--skytop),var(--bg) 62%);padding-top:110px;text-align:center}
+.bunting{position:absolute;top:58px;left:-2%;width:104%;max-width:none;transform-origin:50% 0;animation:sway 6s ease-in-out infinite alternate;z-index:1}
+.cloud{position:absolute;opacity:.9;animation:drift linear infinite;z-index:0}
+.cloud path{fill:#fff;stroke:var(--line);stroke-width:5}
+.hero-copy{position:relative;z-index:3;padding:clamp(30px,4.5vw,64px) max(5vw,16px) 0}
+.hero h1 .w{display:inline-block;animation:pop .9s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(var(--i)*90ms + 250ms)}
+.hero h1 .w.hl{color:var(--coral)}
+.hero p{margin:0 auto 1.5em;font-size:19px;color:var(--soft);animation:fadeup .8s .9s both}
+.hero .cta{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;animation:fadeup .8s 1.1s both}
+.stage{position:relative;z-index:2;height:clamp(280px,38vw,480px);margin-top:clamp(6px,2vw,20px)}
+.ground{position:absolute;left:0;bottom:0;width:100%;max-width:none}
+.layer{position:absolute;bottom:clamp(14px,3.2vw,44px);will-change:transform}
+.layer img{animation:bob var(--t,3.6s) ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:50% 100%}
+.l-bunny{left:4%;width:clamp(70px,13vw,190px)}
+.l-bear{left:17%;width:clamp(80px,15.5vw,225px)}
+.l-kitty{right:16%;width:clamp(70px,13.5vw,200px)}
+.l-chick{right:5%;width:clamp(44px,8vw,120px)}
+.l-cover{left:50%;bottom:clamp(26px,5vw,70px);width:clamp(150px,22vw,300px);margin-left:calc(clamp(150px,22vw,300px) / -2);perspective:1100px;z-index:3}
+.l-cover .tilt{transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out;animation:rise 1.1s .5s cubic-bezier(.2,1.2,.3,1) both}
+.l-cover img{border:3px solid var(--line);border-radius:8px;box-shadow:4px 4px 0 #fff,5px 5px 0 #d8cfc2,8px 8px 0 #fff,9px 9px 0 #d8cfc2,18px 22px 30px rgba(40,25,10,.28)}
+.spark{position:absolute;width:26px;height:26px;background:var(--sun);clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%);animation:twinkle 2.6s ease-in-out infinite;z-index:2}
+@keyframes sway{from{transform:rotate(-.8deg)}to{transform:rotate(.8deg)}}
+@keyframes drift{from{transform:translateX(-25vw)}to{transform:translateX(110vw)}}
+@keyframes pop{from{opacity:0;transform:translateY(.6em) rotate(-8deg) scale(.7)}}
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}}
+@keyframes bob{50%{transform:translateY(-9px) rotate(-1.5deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(60px) rotate(-8deg) scale(.9)}}
+@keyframes twinkle{50%{transform:scale(.45) rotate(45deg);opacity:.5}}
+/* hand-drawn underline */
+.ul{position:relative;display:inline-block;white-space:nowrap}
+.ul svg{position:absolute;left:-2%;bottom:-.22em;width:104%;height:.4em;overflow:visible}
+.ul path{fill:none;stroke:var(--coral);stroke-width:7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1s .2s cubic-bezier(.6,0,.2,1)}
+.in .ul path,.ul.in path{stroke-dashoffset:0}
+/* reveal */
+.rv{opacity:0;transform:translateY(34px) rotate(var(--rot,0deg));transition:opacity .7s var(--dl,0s),transform .9s cubic-bezier(.2,.9,.2,1) var(--dl,0s)}
+.rv.in{opacity:1;transform:none}
 /* book */
-.book{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,72px);align-items:center}
-.book .cover{border:3px solid var(--line);border-radius:10px;box-shadow:12px 14px 0 var(--grass);transform:rotate(-2deg)}
+.book{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,80px);align-items:center}
+.book3d{perspective:1200px;max-width:440px;margin:0 auto}
+.book3d .tilt{transform:rotateY(calc(-14deg + var(--ry,0deg))) rotateX(calc(3deg + var(--rx,0deg)));transition:transform .3s ease-out}
+.book3d img{border:3px solid var(--line);border-radius:8px;box-shadow:4px 4px 0 #fff,5px 5px 0 #d8cfc2,8px 8px 0 #fff,9px 9px 0 #d8cfc2,12px 12px 0 #fff,13px 13px 0 #d8cfc2,24px 26px 0 var(--grass)}
 .tag{display:inline-block;background:var(--sun);color:#3d2c23;border:3px solid var(--line);border-radius:999px;padding:2px 16px;font-weight:600;font-size:16px;margin-bottom:14px}
-.facts{list-style:none;padding:0;margin:0 0 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 24px}
-.facts li{padding-left:34px;position:relative}
-.facts li::before{content:"";position:absolute;left:0;top:5px;width:20px;height:20px;border-radius:50%;border:3px solid var(--line);background:var(--grass)}
-.note{font-size:14px;color:var(--soft);margin-top:14px}
-/* inside */
-.inside{background:var(--paper);border-top:3px solid var(--line);border-bottom:3px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:6px 0 26px}
+.stat{background:var(--paper);border:3px solid var(--line);border-radius:18px;padding:12px 10px;text-align:center}
+.num{display:block;font-size:clamp(28px,3.4vw,40px);font-weight:700;line-height:1.1;color:var(--coral)}
+.stat small{font-size:14px;color:var(--soft)}
+.note{font-size:14px;color:var(--soft);margin-top:16px}
+/* color-in */
+.colorin{position:relative;height:280vh;background:var(--paper);border-top:3px solid var(--line);border-bottom:3px solid var(--line)}
+.pin{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(24px,5vw,80px);max-width:1240px;margin:0 auto;padding:80px max(5vw,16px) 30px}
+.canvas{position:relative;width:min(440px,42vw,calc((100svh - 150px) * .7727));aspect-ratio:2550/3300}
+.canvas img:not(.crayon){position:absolute;inset:0;width:100%;height:100%;border:3px solid var(--line);border-radius:8px;background:#fff}
+.canvas .col{clip-path:inset(0 calc(100% - var(--p,0) * 100%) 0 0)}
+.edge{position:absolute;top:0;bottom:0;left:calc(var(--p,0) * 100%);width:3px;background:var(--coral);opacity:calc(1 - var(--p,0) * var(--p,0) * var(--p,0))}
+.crayon{position:absolute;width:clamp(28px,3.4vw,42px);left:calc(var(--p,0) * 100%);top:calc(18% + var(--p,0) * 60%);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(calc(24deg + var(--p,0) * 14deg));filter:drop-shadow(3px 4px 0 rgba(0,0,0,.18));pointer-events:none}
+.meter{height:14px;border:3px solid var(--line);border-radius:99px;background:var(--bg);overflow:hidden;max-width:360px;margin:20px 0 8px}
+.meter i{display:block;height:100%;width:calc(var(--p,0) * 100%);background:linear-gradient(90deg,var(--coral),var(--sun),#78c25c)}
+.pct{font-family:Fredoka,sans-serif;font-weight:600;color:var(--soft)}
+.manual{display:none;width:100%;max-width:360px;accent-color:var(--coral)}
+/* gallery */
 .rail-head{display:flex;flex-wrap:wrap;align-items:end;gap:12px 24px;margin-bottom:24px}
 .rail-head>div:first-child{margin-right:auto}
 .arrows{display:flex;gap:10px}
-.arrows button{width:52px;height:52px;border-radius:50%;border:3px solid var(--line);background:var(--bg);color:var(--ink);font-size:22px;cursor:pointer}
-.rail{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 22px;scrollbar-width:thin}
+.arrows button{width:52px;height:52px;border-radius:50%;border:3px solid var(--line);background:var(--paper);color:var(--ink);font-size:22px;cursor:pointer;transition:transform .2s}
+.arrows button:hover{transform:scale(1.08) rotate(-6deg)}
+.rail{display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 6px 30px;scrollbar-width:thin}
 .rail figure{flex:0 0 clamp(220px,26vw,300px);margin:0;scroll-snap-align:start}
-.rail img{border:3px solid var(--line);border-radius:8px;background:#fff}
-.rail figcaption{margin-top:10px;font-size:15px;color:var(--soft)}
-.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:760px;margin:48px auto 0}
-.duo figure{margin:0;text-align:center}
-.duo img{border:3px solid var(--line);border-radius:8px}
-.duo figcaption{font-family:Fredoka,sans-serif;font-weight:600;margin-top:10px}
-.all{margin-top:56px;text-align:center}
-.all img{border:3px solid var(--line);border-radius:12px;margin:18px auto 0}
-/* about, contact */
-.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,5vw,72px)}
-.card{background:var(--paper);border:3px solid var(--line);border-radius:22px;padding:clamp(22px,3vw,36px)}
-.mail{font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;word-break:break-all}
-footer{border-top:3px solid var(--line);background:var(--grass)}
-footer .wrap{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;padding:24px max(5vw,16px);font-size:15px}
-footer a{color:var(--ink);font-weight:600}
+.rail .tilt{perspective:800px}
+.rail .tilt img{border:3px solid var(--line);border-radius:8px;background:#fff;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0);transition:transform .25s ease-out,box-shadow .25s;box-shadow:0 6px 0 var(--line)}
+.rail .tilt:hover img{box-shadow:0 14px 0 var(--line)}
+.rail figcaption{margin-top:12px;font-size:15px;color:var(--soft)}
+/* all 50 */
+.grid-wrap{position:relative;margin-top:22px;border:3px solid var(--line);border-radius:14px;overflow:hidden;background:#fff6e6}
+.grid-wrap img{width:100%}
+.lens{position:absolute;width:230px;height:230px;border-radius:50%;border:4px solid var(--line);box-shadow:0 8px 0 rgba(0,0,0,.18);pointer-events:none;background-color:#fff;background-repeat:no-repeat;opacity:0;transform:scale(.5);transition:opacity .2s,transform .25s cubic-bezier(.2,1.5,.4,1)}
+.lens.on{opacity:1;transform:scale(1)}
+.hint{font-size:15px;color:var(--soft)}
+/* about */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,5vw,80px);align-items:center}
+.peek{position:relative;justify-self:center;width:min(320px,70%)}
+.peek img{animation:bob 4s ease-in-out infinite}
+/* footer */
+footer{position:relative;border-top:3px solid var(--line);background:var(--grass);margin-top:60px}
+footer .chick{position:absolute;right:8%;top:-62px;width:64px;transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
+footer:hover .chick{transform:translateY(-10px) rotate(-8deg)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;padding:26px max(5vw,16px);font-size:15px}
+footer a,footer .linkish{color:var(--ink);font-weight:600}
 footer .copy{margin-right:auto}
-/* legal pages */
-.legal{max-width:760px;margin:0 auto}
-.legal h2{margin-top:1.2em}.legal h3{margin-top:1.4em}
-.todo{background:#ffe3e3;color:#8a1c1c;border:2px dashed #ef5b5b;border-radius:6px;padding:0 6px;font-weight:600}
-[hidden]{display:none!important}
-@media(max-width:820px){.book,.two{grid-template-columns:minmax(0,1fr)}.book .cover{max-width:min(380px,86%);margin:0 auto;box-shadow:8px 10px 0 var(--grass)}}
-@media(max-width:600px){.duo{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}nav .links{width:100%;justify-content:space-between;gap:4px 10px}nav .links a{font-size:15px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+/* contact dialog */
+dialog{border:3px solid var(--line);border-radius:22px;padding:28px;max-width:min(440px,92vw);background:var(--paper);color:var(--ink);box-shadow:0 10px 0 var(--line)}
+dialog[open]{animation:pop .45s cubic-bezier(.2,1.5,.4,1)}
+dialog::backdrop{background:rgba(31,34,56,.45);backdrop-filter:blur(3px)}
+.mail{font-family:Fredoka,sans-serif;font-weight:600;font-size:20px;word-break:break-all;background:var(--bg);border-radius:10px;padding:10px 14px}
+.row{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.x{position:absolute;top:10px;right:12px;width:44px;height:44px;border:0;background:none;font-size:26px;color:var(--ink);cursor:pointer}
+@media(max-width:820px){.book,.two{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pin{grid-template-columns:minmax(0,1fr);text-align:center;align-content:center;padding-top:70px}.pin p,.meter{margin-inline:auto}
+ .canvas{width:min(64vw,calc((100svh - 430px) * .7727));justify-self:center}.pin p{font-size:15px}.pin .txt{order:2}}
+@media(max-width:600px){.hero>.cloud{display:none}nav .links{width:100%;justify-content:space-between;gap:4px 10px}nav .links a{font-size:15px}.hero{padding-top:130px}.bunting{top:108px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
+ *,*::before,*::after{animation:none!important;transition:none!important}
+ .rv{opacity:1;transform:none}.ul path{stroke-dashoffset:0}
+ .colorin{height:auto}.pin{position:relative;height:auto}.manual{display:block}}
 </style>
 </head>
 <body>
-<header><nav>
- <a class="brand" href="#top"><img src="./logo.png" alt="">Rosi's Studio</a>
- <div class="links"><a href="#book">The book</a><a href="#inside">Look inside</a><a href="#about">About</a><a href="#contact">Contact</a></div>
+<div class="progress" aria-hidden="true"></div>
+<header id="hdr"><nav>
+ <a class="brand" href="#top"><img src="logo.png" alt="">Rosi's Studio</a>
+ <div class="links"><a href="#book">The book</a><a href="#color">Color it</a><a href="#inside">Look inside</a><a href="#about">About</a></div>
 </nav></header>
 
-<main id="home">
- <section class="band hero" id="top">
-  <div class="wrap">
-   <h1>Cute coloring books for little artists</h1>
+<main>
+ <section class="hero" id="top">
+  <svg class="cloud" style="top:64px;width:150px;animation-duration:70s;animation-delay:-20s" viewBox="0 0 160 80" aria-hidden="true"><path d="M30 70a24 24 0 0 1 2-47 32 32 0 0 1 60-8 26 26 0 0 1 40 22 22 22 0 0 1-4 33z"/></svg>
+  <svg class="cloud" style="top:76px;width:110px;animation-duration:95s;animation-delay:-60s" viewBox="0 0 160 80" aria-hidden="true"><path d="M30 70a24 24 0 0 1 2-47 32 32 0 0 1 60-8 26 26 0 0 1 40 22 22 22 0 0 1-4 33z"/></svg>
+    <img class="bunting" src="bunting.png" width="1800" height="139" alt="">
+  <div class="hero-copy">
+   <h1 id="headline">Cute coloring books for little artists</h1>
    <p>Cheerful baby animals, bold lines and big spaces, made for kids ages 3 to 8.</p>
-   <a class="btn amazon" href="#book">See the book</a>
+   <div class="cta"><a class="btn" href="#book">Meet the book</a><a class="btn ghost" href="#color">Watch a page come alive</a></div>
   </div>
-  <div class="scene"><img src="./hero.jpg" width="2016" height="900" alt="The cover of Little Paws, Busy Days between a bunny, a bear chef, a kitten and a chick"></div>
+  <div class="stage" id="stage">
+   <svg class="cloud" style="top:4%;width:120px;animation-duration:80s;animation-delay:-5s" viewBox="0 0 160 80" aria-hidden="true"><path d="M30 70a24 24 0 0 1 2-47 32 32 0 0 1 60-8 26 26 0 0 1 40 22 22 22 0 0 1-4 33z"/></svg>
+   <svg class="cloud" style="top:16%;width:90px;animation-duration:110s;animation-delay:-48s" viewBox="0 0 160 80" aria-hidden="true"><path d="M30 70a24 24 0 0 1 2-47 32 32 0 0 1 60-8 26 26 0 0 1 40 22 22 22 0 0 1-4 33z"/></svg>
+   <span class="spark" style="left:30%;top:18%;animation-delay:-.4s"></span>
+   <span class="spark" style="right:30%;top:8%;width:18px;height:18px;animation-delay:-1.3s"></span>
+   <span class="spark" style="left:12%;top:4%;width:16px;height:16px;animation-delay:-2s"></span>
+   <img class="ground" src="ground.png" width="1800" height="225" alt="" data-depth="0">
+   <div class="layer l-bunny" data-depth="0.10" style="--t:3.4s"><img src="bunny.png" width="270" height="352" alt="A bunny holding a carrot"></div>
+   <div class="layer l-bear" data-depth="0.16" style="--t:4s;--d:-1s"><img src="bear.png" width="304" height="457" alt="A bear chef"></div>
+   <div class="layer l-cover" data-depth="0.24"><div class="tilt" id="heroCover"><img src="cover.jpg" width="900" height="1165" alt="Cover of Little Paws, Busy Days"></div></div>
+   <div class="layer l-kitty" data-depth="0.16" style="--t:3.8s;--d:-2s"><img src="kitty.png" width="277" height="307" alt="A kitten holding an apple"></div>
+   <div class="layer l-chick" data-depth="0.10" style="--t:2.8s;--d:-.6s"><img src="chick.png" width="164" height="207" alt="A little chick"></div>
+  </div>
  </section>
 
  <section class="band" id="book">
   <div class="wrap book">
-   <img class="cover" src="./cover.jpg" width="900" height="1165" alt="Cover of the coloring book Little Paws, Busy Days">
-   <div>
+   <div class="book3d rv"><div class="tilt" id="bookTilt"><img src="cover.jpg" width="900" height="1165" alt="Cover of the coloring book Little Paws, Busy Days" loading="lazy"></div></div>
+   <div class="rv" style="--dl:.15s">
     <span class="tag">New coloring book</span>
-    <h2>Little Paws, Busy Days</h2>
+    <h2>Little Paws, <span class="ul">Busy Days<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 9 C 50 2, 120 15, 197 5"/></svg></span></h2>
     <p>Fifty little moments from a baby animal's busy day. A bear chef cooks soup, a bunny bakes cookies, a lamb rides a bike, a duckling splashes in the rain and a penguin builds a snowman. Every picture has thick, clear outlines and big spaces, so small hands can color with confidence.</p>
-    <ul class="facts">
-     <li>50 coloring pages, one picture per page</li>
-     <li>Single-sided, so markers don't spoil the next picture</li>
-     <li>26 different baby animals</li>
-     <li>Large 8.5 × 11 in paperback</li>
-     <li>For kids ages 3 to 8</li>
-     <li>Name page and a "Great job!" page at the end</li>
-    </ul>
-    <a class="btn" id="buy" href="#">View on Amazon</a>
-    <p class="note">Illustrations created with AI tools and reviewed page by page by Rosi's Studio.</p>
+    <div class="stats">
+     <div class="stat"><span class="num" data-count="50">50</span><small>coloring pages</small></div>
+     <div class="stat"><span class="num" data-count="26">26</span><small>baby animals</small></div>
+     <div class="stat"><span class="num">1</span><small>picture per page, single-sided</small></div>
+     <div class="stat"><span class="num">3–8</span><small>years</small></div>
+    </div>
+    <a class="btn buy" href="#">View on Amazon</a>
+    <p class="note">Large 8.5 × 11 in paperback. Illustrations created with AI tools and reviewed page by page by Rosi's Studio.</p>
    </div>
   </div>
  </section>
 
- <section class="band inside" id="inside">
+ <section class="colorin" id="color" style="--p:0">
+  <div class="pin">
+   <div class="txt">
+    <h2>Watch a page <span class="ul">come alive<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C 60 14, 130 1, 197 7"/></svg></span></h2>
+    <p>Keep scrolling and the bear chef gets his colors, the way a page looks after an afternoon with a box of crayons. The book itself is black and white, ready for your little one's own ideas.</p>
+    <div class="meter" aria-hidden="true"><i></i></div>
+    <span class="pct" id="pct">0 % colored</span>
+    <input class="manual" id="manual" type="range" min="0" max="100" value="100" aria-label="Color the page">
+   </div>
+   <div class="canvas">
+    <img src="p01_lg.jpg" width="1040" height="1346" alt="Bear chef coloring page in black and white" loading="lazy">
+    <img class="col" src="p01_col_lg.jpg" width="1040" height="1346" alt="The same page colored in, as an example" loading="lazy">
+    <span class="edge" aria-hidden="true"></span>
+    <img class="crayon" src="crayon.png" width="120" height="375" alt="" aria-hidden="true">
+   </div>
+  </div>
+ </section>
+
+ <section class="band" id="inside">
   <div class="wrap">
-   <div class="rail-head">
-    <div><h2>Look inside</h2><p style="margin:0">A few of the 50 pages, exactly as they are printed.</p></div>
+   <div class="rail-head rv">
+    <div><h2>Look <span class="ul">inside<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 9 C 50 2, 120 15, 197 5"/></svg></span></h2><p style="margin:0">A few of the 50 pages, exactly as they are printed.</p></div>
     <div class="arrows"><button type="button" id="prev" aria-label="Previous pages">←</button><button type="button" id="next" aria-label="Next pages">→</button></div>
    </div>
    <div class="rail" id="rail" tabindex="0" aria-label="Sample pages"></div>
 
-   <div class="duo">
-    <figure><img src="./p01.jpg" width="700" height="906" alt="Bear chef coloring page in black and white" loading="lazy"><figcaption>The page</figcaption></figure>
-    <figure><img src="./p01_colored.jpg" width="700" height="906" alt="The same bear chef page colored in" loading="lazy"><figcaption>After coloring (example)</figcaption></figure>
+   <div class="center rv" style="margin-top:70px">
+    <h2>All 50 pictures at a <span class="ul">glance<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C 60 14, 130 1, 197 7"/></svg></span></h2>
+    <p class="hint" id="hint">Move your mouse over the pages to take a closer look.</p>
    </div>
-
-   <div class="all">
-    <h3>All 50 pictures at a glance</h3>
-    <img src="./all50.jpg" width="1654" height="1054" alt="Small previews of all 50 coloring pages" loading="lazy">
+   <div class="grid-wrap rv" id="gridWrap">
+    <img id="grid" src="all50.jpg" width="1654" height="1054" alt="Small previews of all 50 coloring pages" loading="lazy">
+    <div class="lens" id="lens" aria-hidden="true"></div>
    </div>
   </div>
  </section>
 
  <section class="band" id="about">
   <div class="wrap two">
-   <div>
-    <h2>About Rosi's Studio</h2>
+   <div class="rv">
+    <h2>About Rosi's <span class="ul">Studio<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 9 C 50 2, 120 15, 197 5"/></svg></span></h2>
     <p>Rosi's Studio is a small independent studio that makes simple, happy coloring books for young children. The idea is easy: friendly characters, everyday adventures and lines bold enough for a three-year-old.</p>
     <p>The illustrations are created with AI tools. Every page is then checked by hand for clean lines, closed shapes and enough room to color before it goes to print.</p>
+    <p class="hint">Questions about a book or an idea for the next one? <button type="button" class="linkish" data-contact>Get in touch</button>.</p>
    </div>
-   <div class="card" id="contact">
-    <h2>Say hello</h2>
-    <p>Questions about a book, a printing problem or an idea for the next one? Send a message.</p>
-    <p class="mail" id="mail"></p>
-   </div>
+   <div class="peek rv" style="--dl:.2s;--rot:4deg"><img src="bear.png" width="304" height="457" alt="The bear chef waving" loading="lazy"></div>
   </div>
  </section>
 </main>
 
-<main id="impressum" class="band" hidden>
- <article class="legal">
-  <h1>Impressum</h1>
-  <h3>Angaben gemäß § 5 DDG</h3>
-  <p><span data-f="legalName"></span><br><span data-f="street"></span><br><span data-f="city"></span><br>Deutschland</p>
-  <h3>Kontakt</h3>
-  <p>E-Mail: <span data-f="email"></span></p>
-  <p>Unter dem Namen „Rosi's Studio“ veröffentlicht die oben genannte Person Malbücher.</p>
-  <p><a href="#top">Zurück zur Startseite</a></p>
- </article>
-</main>
+<footer>
+ <img class="chick" src="chick.png" width="164" height="207" alt="" aria-hidden="true">
+ <div class="wrap">
+  <span class="copy">© 2026 Rosi's Studio</span>
+  <button type="button" class="linkish" data-contact>Contact</button>
+  <a href="impressum.html" rel="nofollow">Impressum</a>
+  <a href="datenschutz.html" rel="nofollow">Datenschutz</a>
+ </div>
+</footer>
 
-<main id="datenschutz" class="band" hidden>
- <article class="legal">
-  <h1>Datenschutzerklärung</h1>
-  <h3>1. Verantwortlicher</h3>
-  <p><span data-f="legalName"></span>, <span data-f="street"></span>, <span data-f="city"></span>, E-Mail: <span data-f="email"></span></p>
-  <h3>2. Keine Cookies, kein Tracking</h3>
-  <p>Diese Website setzt keine Cookies, verwendet keine Analyse- oder Tracking-Dienste und bindet keine externen Inhalte wie Schriftarten, Videos oder Karten ein. Alle Dateien werden vom eigenen Webspace geladen.</p>
-  <h3>3. Hosting und Server-Logfiles</h3>
-  <p>Die Website wird bei <span data-f="host"></span> gehostet. Beim Aufruf verarbeitet der Hoster technisch notwendige Daten (IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Browsertyp), um die Seite auszuliefern und die Sicherheit des Betriebs zu gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Die Daten werden nicht mit anderen Daten zusammengeführt.</p>
-  <h3>4. Kontakt per E-Mail</h3>
-  <p>Wenn Sie eine E-Mail senden, werden Ihre Angaben zur Bearbeitung der Anfrage gespeichert (Art. 6 Abs. 1 lit. b bzw. f DSGVO) und gelöscht, sobald sie nicht mehr benötigt werden.</p>
-  <h3>5. Links zu Amazon</h3>
-  <p>Diese Website enthält einfache Links zu Amazon. Erst wenn Sie einen Link anklicken, verlassen Sie diese Website; ab dann gilt die Datenschutzerklärung von Amazon.</p>
-  <h3>6. Ihre Rechte</h3>
-  <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15 bis 21 DSGVO) sowie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.</p>
-  <p><a href="#top">Zurück zur Startseite</a></p>
- </article>
-</main>
-
-<footer><div class="wrap">
- <span class="copy">© 2026 Rosi's Studio</span>
- <a href="#impressum">Impressum</a><a href="#datenschutz">Datenschutz</a>
-</div></footer>
+<dialog id="contact" aria-labelledby="ctitle">
+ <button type="button" class="x" id="close" aria-label="Close">×</button>
+ <h3 id="ctitle">Say hello</h3>
+ <p>Write to us about the books, a printing problem or an idea. We read every message.</p>
+ <p class="mail" id="mailOut"></p>
+ <div class="row"><a class="btn" id="mailLink" href="#">Write an email</a><button type="button" class="btn ghost" id="copy">Copy</button></div>
+</dialog>
 
 <script>
 {
- // ---- edit these values, then publish the site ----
- const SITE = {
-  amazonUrl: '',          // e.g. https://www.amazon.com/dp/XXXXXXXXXX
-  email: 'rosis.studio@proton.me',         // contact address shown on the site
-  legalName: 'Philipp Rosanka',             // real full name (required for the Impressum)
-  street: 'Sachsenring 65',                 // street and number
-  city: '94315 Straubing',                  // postcode and city
-  host: 'Vercel Inc.'     // hosting provider
- };
+ // ---- edit this value when the book is live ----
+ const SITE = { amazonUrl: '' };   // e.g. https://www.amazon.com/dp/XXXXXXXXXX
 
- const pages = [
-  ['p01', 'Bear chef cooking soup'], ['p02', 'Bunny baking cookies'], ['p09', 'Lamb riding a bike'],
-  ['s29', 'Duckling in the rain'], ['s30', 'Penguin building a snowman'], ['s46', 'Chick and the giant sunflower'],
-  ['s43', 'Toy train ride'], ['s23', 'Sleepy owl at bedtime'], ['p11', 'Monkey on the slide'], ['s18', 'Hippo in a bubble bath']
- ];
+ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const hover = matchMedia('(hover: hover)').matches;
+ const $ = s => document.querySelector(s);
  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const rail = document.getElementById('rail');
- rail.innerHTML = pages.map(([f, t]) =>
-  `<figure><img src="./${f}.jpg" width="700" height="906" alt="${esc(t)} coloring page" loading="lazy"><figcaption>${esc(t)}</figcaption></figure>`).join('');
- const step = dir => rail.scrollBy({left: dir * rail.clientWidth * 0.8, behavior: 'smooth'});
- document.getElementById('prev').addEventListener('click', () => step(-1));
- document.getElementById('next').addEventListener('click', () => step(1));
- rail.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
 
- const buy = document.getElementById('buy');
- if (SITE.amazonUrl) { buy.href = SITE.amazonUrl; buy.rel = 'noopener'; }
- else { buy.textContent = 'Coming soon on Amazon'; buy.classList.add('off'); buy.removeAttribute('href'); }
+ // headline: one span per word, popping in one after another
+ const h = $('#headline');
+ h.innerHTML = h.textContent.split(' ').map((w, i) => `<span class="w${w === 'little' || w === 'artists' ? ' hl' : ''}" style="--i:${i}">${esc(w)}</span>`).join(' ');
 
- const mail = document.getElementById('mail');
- if (SITE.email) { const a = document.createElement('a'); a.href = 'mailto:' + SITE.email; a.textContent = SITE.email; mail.append(a); }
- else mail.textContent = 'Email address coming soon';
-
- for (const el of document.querySelectorAll('[data-f]')) {
-  const v = SITE[el.dataset.f];
-  if (v) el.textContent = v; else { el.textContent = 'bitte eintragen: ' + el.dataset.f; el.className = 'todo'; }
+ // Amazon buttons
+ for (const b of document.querySelectorAll('.buy')) {
+  if (SITE.amazonUrl) { b.href = SITE.amazonUrl; b.rel = 'noopener'; }
+  else { b.textContent = 'Coming soon on Amazon'; b.classList.add('off'); b.removeAttribute('href'); }
  }
 
- const views = ['impressum', 'datenschutz'];
- const route = () => {
-  const h = location.hash.slice(1);
-  const legal = views.includes(h);
-  document.getElementById('home').hidden = legal;
-  for (const v of views) document.getElementById(v).hidden = v !== h;
-  if (legal) window.scrollTo(0, 0);
+ // sample pages
+ const pages = [['p02','Bunny baking cookies'],['p09','Lamb riding a bike'],['s29','Duckling in the rain'],['s30','Penguin building a snowman'],
+  ['s46','Chick and the giant sunflower'],['s43','Toy train ride'],['s23','Sleepy owl at bedtime'],['p11','Monkey on the slide'],['s18','Hippo in a bubble bath']];
+ const rail = $('#rail');
+ rail.innerHTML = pages.map(([f, t], i) => `<figure class="rv" style="--dl:${(i % 4) * 0.08}s;--rot:${i % 2 ? 2 : -2}deg"><div class="tilt"><img src="${f}.jpg" width="700" height="906" alt="${esc(t)} coloring page" loading="lazy"></div><figcaption>${esc(t)}</figcaption></figure>`).join('');
+ const step = d => rail.scrollBy({left: d * rail.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth'});
+ $('#prev').addEventListener('click', () => step(-1));
+ $('#next').addEventListener('click', () => step(1));
+ rail.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
+
+ // reveal on scroll, underlines draw, counters count
+ const countUp = el => {
+  const end = +el.dataset.count, t0 = performance.now();
+  const tick = t => { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
  };
- window.addEventListener('hashchange', route);
- route();
+ const io = new IntersectionObserver(es => {
+  for (const e of es) if (e.isIntersecting) {
+   e.target.classList.add('in');
+   if (!reduce) for (const n of e.target.querySelectorAll('[data-count]')) countUp(n);
+   io.unobserve(e.target);
+  }
+ }, {threshold: 0.18});
+ for (const el of document.querySelectorAll('.rv, .ul')) io.observe(el);
+
+ // 3D tilt toward the pointer
+ const tilt = (zone, el, max) => {
+  if (!hover || reduce) return;
+  zone.addEventListener('pointermove', e => {
+   const r = zone.getBoundingClientRect();
+   const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+   el.style.setProperty('--ry', (x * max).toFixed(2) + 'deg');
+   el.style.setProperty('--rx', (-y * max).toFixed(2) + 'deg');
+  });
+  zone.addEventListener('pointerleave', () => { el.style.setProperty('--ry', '0deg'); el.style.setProperty('--rx', '0deg'); });
+ };
+ tilt($('#top'), $('#heroCover'), 18);
+ tilt($('#book'), $('#bookTilt'), 16);
+ for (const t of rail.querySelectorAll('.tilt')) tilt(t, t.querySelector('img'), 14);
+
+ // scroll-driven: progress line, header, parallax, color-in
+ const hdr = $('#hdr'), prog = $('.progress'), layers = [...document.querySelectorAll('[data-depth]')];
+ const sec = $('#color'), pct = $('#pct'), manual = $('#manual');
+ const setP = p => { sec.style.setProperty('--p', p.toFixed(3)); pct.textContent = Math.round(p * 100) + ' % colored'; };
+ let ticking = false;
+ const onScroll = () => {
+  ticking = false;
+  const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+  prog.style.setProperty('--sp', max > 0 ? (y / max).toFixed(4) : 0);
+  hdr.classList.toggle('scrolled', y > 30);
+  if (reduce) return;
+  if (y < innerHeight * 1.2) for (const l of layers) l.style.transform = `translateY(${(-y * +l.dataset.depth).toFixed(1)}px)`;
+  const r = sec.getBoundingClientRect(), span = r.height - innerHeight;
+  setP(Math.min(1, Math.max(0, (-r.top) / (span * 0.85))));
+ };
+ addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, {passive: true});
+ addEventListener('resize', onScroll);
+ if (reduce) { setP(1); manual.addEventListener('input', () => setP(manual.value / 100)); }
+ onScroll();
+
+ // magnifier over all 50 pages
+ const wrapG = $('#gridWrap'), grid = $('#grid'), lens = $('#lens'), Z = 1.9, R = 115;
+ if (hover) {
+  let loaded = false;
+  wrapG.addEventListener('pointerenter', () => { if (!loaded) { lens.style.backgroundImage = 'url(all50_hd.jpg)'; loaded = true; } lens.classList.add('on'); });
+  wrapG.addEventListener('pointerleave', () => lens.classList.remove('on'));
+  wrapG.addEventListener('pointermove', e => {
+   const r = grid.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+   lens.style.left = (x - R) + 'px'; lens.style.top = (y - R) + 'px';
+   lens.style.backgroundSize = `${r.width * Z}px ${r.height * Z}px`;
+   lens.style.backgroundPosition = `${-(x * Z - R)}px ${-(y * Z - R)}px`;
+  });
+ } else $('#hint').textContent = 'Every page, one picture, lots of room to color.';
+
+ // contact: the address is put together only when someone asks for it
+ const dlg = $('#contact');
+ const addr = () => ['rosis', 'studio'].join('.') + String.fromCharCode(64) + ['proton', 'me'].join('.');
+ for (const b of document.querySelectorAll('[data-contact]')) b.addEventListener('click', () => {
+  const a = addr();
+  $('#mailOut').textContent = a;
+  $('#mailLink').href = 'mailto:' + a;
+  if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+ });
+ $('#close').addEventListener('click', () => dlg.close());
+ dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+ $('#copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(addr()); $('#copy').textContent = 'Copied'; }
+  catch (err) { $('#copy').textContent = 'Select and copy above'; }
+  setTimeout(() => { $('#copy').textContent = 'Copy'; }, 2200);
+ });
 }
 </script>
 </body>
